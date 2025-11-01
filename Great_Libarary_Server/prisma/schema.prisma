@@ -13,3 +13,16 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model State{
+  id        Int      @id @default(autoincrement())
+  place String
+  Character String[]
+}
+
+model logs{
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+  log      String
+}
