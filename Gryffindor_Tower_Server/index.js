@@ -2,15 +2,15 @@ import express from "express";
 import { Kafka } from "kafkajs";
 
 const app = express();
-const port = 3000;
+const port = 3002;
+const HOST = '0.0.0.0';
 app.use(express.json())
 
 // Kafka configuration
 const kafka = new Kafka({
-    clientId:"serverA",
-    brokers:["localhost:9092"]
+    clientId: "serverB",
+    brokers: ["kafka:9092"] // <-- Use the service name 'kafka'
 })
-
 const producer = kafka.producer();
 
 async function startProducer(){
@@ -37,6 +37,10 @@ app.post("/message-to-kafka",async(req,res)=>{
     }
 })
 
-app.listen(port,()=>{
-    console.log("app running on http://localhost:3000")
+app.get("/test",async(req,res)=>{
+    res.send("hi from gryf tower")
+})
+
+app.listen(port,HOST,()=>{
+    console.log("app running on http://localhost:3002")
 })

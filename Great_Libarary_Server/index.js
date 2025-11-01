@@ -4,13 +4,13 @@ import express from "express";
 
 const app = express();
 const port = 3001
+const HOST = '0.0.0.0';
 app.use(express.json())
 
 const kafka = new Kafka({
-    clientId:"serverB",
-    brokers:["localhost:9092"]
+    clientId: "serverB",
+    brokers: ["kafka:9092"] // <-- Use the service name 'kafka'
 })
-
 const consumer = kafka.consumer({groupId : "hogwarts-group"})
 
 async function startConsumer(){
@@ -27,8 +27,14 @@ async function startConsumer(){
 }
 
 
+
+
 startConsumer();
 
-app.listen(port,()=>{
+app.get("/test",async(req,res)=>{
+    res.send("hi from great lib")
+})
+
+app.listen(port,HOST,()=>{
 console.log(`running on http://localhost:${port}`)
 })
