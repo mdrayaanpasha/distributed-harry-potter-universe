@@ -11,8 +11,12 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@prisma/client": "^6.18.0",
     "express": "^5.1.0",
     "kafka": "^0.2.3",
     "kafkajs": "^2.2.4"
+  },
+  "devDependencies": {
+    "prisma": "^6.18.0"
   }
 }

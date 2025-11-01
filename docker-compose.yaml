@@ -15,3 +15,20 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  postgres:
+    image: postgres:16
+    container_name: harry-postgres
+    restart: always
+
+    environment:
+      POSTGRES_USER: harry
+      POSTGRES_PASSWORD: potter
+      POSTGRES_DB: hogwarts
+
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
