@@ -101,6 +101,15 @@ services:
       - postgres
     restart: always
 
+  master_server:
+    build: ./MASTER_SERVER
+    container_name: master-server
+    ports:
+      - "3008:3008"
+    depends_on:
+      - postgres
+    restart: always
+
       
     
 
