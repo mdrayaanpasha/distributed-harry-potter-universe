@@ -8,9 +8,11 @@ app.use(express.json())
 
 // Kafka configuration
 const kafka = new Kafka({
-    clientId: "serverB",
-    brokers: ["kafka:9092"] // <-- Use the service name 'kafka'
-})
+  clientId: 'GryffindorTowerServer',
+  brokers: ['kafka:29092']
+});
+
+
 const producer = kafka.producer();
 
 async function startProducer(){
@@ -18,7 +20,12 @@ async function startProducer(){
     console.log("connected server 1 to kafka!!")
 }
 
-startProducer();
+
+async function startConsumer(){
+    const consumer = kafka.consumer({groupId:"gryffindor-group"});
+    await consumer.connect();
+    await consumer.subscribe({topic:"gryffindor-messages",fromBeginning:true});
+}
 
 
 app.post("/message-to-kafka",async(req,res)=>{
@@ -41,6 +48,14 @@ app.get("/test",async(req,res)=>{
     res.send("hi from gryf tower")
 })
 
-app.listen(port,HOST,()=>{
-    console.log("app running on http://localhost:3002")
-})
+app.listen(port, HOST, async () => {
+  console.log(`🚀 Server running at http://localhost:${port}`);
+
+  try {
+    await startProducer();
+    await startConsumer();
+    console.log("✅ Kafka producer & consumer ready");
+  } catch (err) {
+    console.error("❌ Error starting Kafka:", err);
+  }
+});

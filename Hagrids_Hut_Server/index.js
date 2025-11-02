@@ -8,11 +8,19 @@ const port = 3003
 app.use(express.json())
 
 const kafka = new Kafka({
-    clientId: "serverB",
-    brokers: ["kafka:9092"] // <-- Use the service name 'kafka'
-})
+  clientId: 'HagridsHutServer',
+  brokers: ['kafka:29092']
+});
 
-const consumer = kafka.consumer({groupId : "hogwarts-group"})
+
+const producer = kafka.producer()
+
+async function startProducer(){
+    await producer.connect();
+    console.log("--PRODUCER INITIATED--")
+}
+
+const consumer = kafka.consumer({groupId : "hagrids-group"})
 
 async function startConsumer(){
     await consumer.connect();
@@ -28,13 +36,22 @@ async function startConsumer(){
 }
 
 
+
 app.get("/test",async(req,res)=>{
     res.send("hi from hag hut")
 })
 
 
-startConsumer();
 
-app.listen(port,HOST,()=>{
-console.log(`running on http://localhost:${port}`)
-})
+
+app.listen(port, HOST, async () => {
+  console.log(`🚀 Server running at http://localhost:${port}`);
+
+  try {
+    await startProducer();
+    await startConsumer();
+    console.log("✅ Kafka producer & consumer ready");
+  } catch (err) {
+    console.error("❌ Error starting Kafka:", err);
+  }
+});
