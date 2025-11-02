@@ -25,6 +25,92 @@ app.get("/test", async (req, res) => {
   res.json({ message: "yello there you piece of code!!" });
 });
 
+
+const topicsMap = {
+    greatLibrary: {
+        name:"library-group",
+        characters:[]
+    } ,
+    gryffindorTower: {
+        name:"gryffindor-messages",
+        characters:[],
+    },
+    hagridsHut: {
+        name:"hagrids-group",
+        characters:[],
+    },
+    herbologyGreenHouse: {
+        name:"herbology-group",
+        characters:[],
+    },
+    muggleWorld: {
+        name:"muggle-group",
+        characters:[],
+    },
+    platform9Quarters: {
+        name:"platform-group",
+        characters:[],
+    },
+    quidditchPitch: {
+        name:"quidditch-group",
+        characters:[],
+    }
+}
+
+const characters = ["Harry","Ron","Hermione","Draco","Hagrid","Dumbledore","Snape","McGonagall","Luna","Neville","Fred","George","Ginny","Voldemort","Sirius","Remus","Alastor","Dobby","Cedric","Cho","Severus","Bellatrix","Lucius","Narcissa","Tonks","Kingsley","Cornelius","Fleur","Bill","Charlie","Percy","Oliver","Lee","Dean","Parvati","Lavender","Padma","Marcus","Gregory","Vincent","Dennis","Zacharias"];
+
+const keys = Object.keys(topicsMap);
+
+
+app.get("/initate",async(req,res)=>{
+
+    for(let key in topicsMap){
+        const topicInfo = topicsMap[key];
+        //pick and delete 6 characters randomly from characters array
+        for(let i=0;i<6;i++){
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            const character = characters.splice(randomIndex, 1)[0];
+            topicInfo.characters.push(character);
+        }
+    }
+
+    const data = await prisma.state.findFirst();
+    if(data){
+        await prisma.state.deleteMany({});
+    }
+
+    const moreDate = await prisma.logs.deleteMany({});
+
+//     // model State{
+//   id        Int      @id @default(autoincrement())
+//   place String
+//   Character String[]
+// }
+    for(let key in topicsMap){
+        const topicInfo = topicsMap[key];
+        await prisma.state.create({
+            data:{
+                place: key,
+                Character: topicInfo.characters
+            }
+        })
+    }
+
+    res.json({status:"initiated", topicsMap});
+
+})
+
+app.get("/states",async(req,res)=>{
+    const data = await prisma.state.findMany();
+    res.json({data});
+})
+
+app.delete("/reset",async(req,res)=>{
+    const data = await prisma.state.deleteMany({});
+    const logData = await prisma.logs.deleteMany({});
+    res.json({status:"reset done", data, logData});
+});
+
 app.post("/send", async (req, res) => {
   const { message } = req.body;
   try {
