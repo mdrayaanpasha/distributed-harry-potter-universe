@@ -1,6 +1,6 @@
-from node:18-alpine
+FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/server/muggle_world_server
 
 COPY package*.json ./
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3014
+EXPOSE 3005
 
 CMD [ "node","index.js" ]

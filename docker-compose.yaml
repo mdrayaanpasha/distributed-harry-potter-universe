@@ -29,69 +29,59 @@ services:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  great_library_server:
+    build: ./Great_Library_Server
+    container_name: great-library-server
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    restart: always
+
   gryffindor_tower_server:
     build: ./Gryffindor_Tower_Server
     container_name: gryffindor-server
+
     ports:
-      - "3001:3009" 
+      - "3002:3002" 
     depends_on:
       - postgres
     restart: always
 
-  great_library_server:
-    build: ./Great_Libarary_Server
-    container_name: great-library-server
-    ports:
-     - "3002:3010"
-    depends_on:
-      - postgres
-    restart: always
-
-  
-
-
-  hagrids_hut_server:
+  hagrid_hut_server:
     build: ./Hagrids_Hut_Server
-    container_name: hagrids-hut-server
+    container_name: hagrid-hut-server
     ports:
-      - 3003:3011
+      - "3003:3003"
     depends_on:
       - postgres
     restart: always
 
-  herbology_greenhouse_sever:
-   
-    build: ./Herbology_GreenHouse_Server
-    container_name: herb-greenhouse-server
+  herbology_greenhouse_server:
+    build: ./Herbology_Greenhouse_Server
+    container_name: herbology-greenhouse-server
     ports:
-      - "3004:3012"
+      - "3004:3004"
     depends_on:
       - postgres
     restart: always
 
-  hogwarts_library_server:
-    build: ./Hogwarts_Library_Server
-    container_name: hogwarts-lib-server
-    ports:
-      - "3005:3013"
-    depends_on:
-      - postgres
-    restart: always
 
   muggle_world_server:
     build: ./Muggle_World_Server
     container_name: muggle-world-server
     ports:
-      - "3006:3014"
+      - "3005:3005"
     depends_on:
       - postgres
     restart: always
-    
+
   platform_nine_quarters_server:
     build: ./Platform_Nine_Quarters_Server
-    container_name: Platform-9-quaters-Server
+    container_name: platform-nine-quarters-server
     ports:
-      - "3007:3015"
+      - "3006:3006"
     depends_on:
       - postgres
     restart: always
@@ -100,10 +90,11 @@ services:
     build: ./Quidditch_Pitch_Server
     container_name: quidditch-pitch-server
     ports:
-      - "3008:3016"
+      - "3007:3007"
     depends_on:
       - postgres
     restart: always
+
       
     
 

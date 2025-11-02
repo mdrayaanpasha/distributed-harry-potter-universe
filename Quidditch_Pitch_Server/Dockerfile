@@ -1,6 +1,6 @@
 from node:18-alpine
 
-WORKDIR /app
+WORKDIR /app/server/quidditch_pitch_server
 
 COPY package*.json ./
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3016
+EXPOSE 3007
 
 CMD [ "node","index.js" ]

@@ -1,6 +1,6 @@
-From node:19-alpine
+FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/server/hagrids_hut_server
 
 COPY package*.json ./
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3011
+EXPOSE 3003
 
 CMD ["node","index.js"]

@@ -1,6 +1,6 @@
-from node:18-alpine
+FROM node:20-alpine 
 
-WORKDIR /app
+WORKDIR /app/server/gryffindor_tower_server
 
 COPY package*.json ./
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . . 
 
-EXPOSE 3010
+EXPOSE 3002
 
 CMD ["node","index.js"]

@@ -1,6 +1,6 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/servers/great_library_server
 
 COPY package*.json ./
 
@@ -8,8 +8,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3009
+EXPOSE 3001
 
 CMD ["node","index.js"]
-
 
