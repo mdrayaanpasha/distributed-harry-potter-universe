@@ -16,7 +16,7 @@ const consumer = kafka.consumer({groupId : "platform-group"})
 
 async function startConsumer(){
     await consumer.connect();
-    await consumer.subscribe({topic:"magic-messages",fromBeginning:true});
+    await consumer.subscribe({topic:"platform-messages",fromBeginning:true});
 
     console.log("serverb actively listenning");
     await consumer.run({
@@ -28,7 +28,7 @@ async function startConsumer(){
 }
 
 
-startConsumer();
+
 const HOST = '0.0.0.0';
 const producer = kafka.producer();
 

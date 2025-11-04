@@ -16,7 +16,7 @@ const consumer = kafka.consumer({groupId : "quidditch-group"})
 
 async function startConsumer(){
     await consumer.connect();
-    await consumer.subscribe({topic:"magic-messages",fromBeginning:true});
+    await consumer.subscribe({topic:"quidditch-messages",fromBeginning:true});
 
     console.log("serverb actively listenning");
     await consumer.run({

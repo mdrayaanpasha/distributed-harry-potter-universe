@@ -21,7 +21,7 @@ const consumer = kafka.consumer({groupId : "muggle-group"})
 
 async function startConsumer(){
     await consumer.connect();
-    await consumer.subscribe({topic:"magic-messages",fromBeginning:true});
+    await consumer.subscribe({topic:"muggle-messages",fromBeginning:true});
 
     console.log("serverb actively listenning");
     await consumer.run({

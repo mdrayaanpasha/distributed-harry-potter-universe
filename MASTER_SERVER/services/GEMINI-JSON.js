@@ -2,12 +2,10 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StructuredOutputParser } from "@langchain/core/output_parsers";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
 
 // Setup the Gemini model
 const llm = new ChatGoogleGenerativeAI({
@@ -37,6 +35,8 @@ const prompt = new PromptTemplate({
 
 Party 1: {party1}
 Party 2: {party2}
+Characters in Party 1: {party1Characters}
+Characters in Party 2: {party2Characters}
 
 Your tasks:
 1. Summarise what happened briefly (≤20 words).
@@ -49,7 +49,7 @@ Your tasks:
 Return the result in JSON format as per these instructions:
 
 {format_instructions}`,
-  inputVariables: ["party1", "party2"],
+  inputVariables: ["party1", "party2","party1Characters","party2Characters"],
   partialVariables: { format_instructions: parser.getFormatInstructions() }
 });
 

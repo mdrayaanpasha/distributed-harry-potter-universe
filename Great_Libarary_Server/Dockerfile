@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-WORKDIR /app/servers/great_library_server
+WORKDIR /app/server/master_server
 
 COPY package*.json ./
 
@@ -8,7 +8,9 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3001
+COPY .env.docker .env
 
-CMD ["node","index.js"]
 
+EXPOSE 3008
+
+CMD [ "node","index.js" ]
