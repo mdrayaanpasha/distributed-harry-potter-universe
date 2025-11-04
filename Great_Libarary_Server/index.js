@@ -27,11 +27,38 @@ async function startConsumer(){
     await consumer.connect();
     await consumer.subscribe({topic:"great-lib-messages",fromBeginning:true});
 
+
     console.log("serverb actively listenning");
     await consumer.run({
         eachMessage : async({topic,partition,message}) =>{
             console.log("=====================")
             console.log(`recieved this: ${message.value.toString()}`)
+
+
+            /*
+            message can be either initate or an action.
+
+            1. Initiate.
+              - pick an effector.
+              - then say what was happenning with you with the characters you have.
+              - then which decided to go to the effector place.
+            
+            2. React.
+             - you will get the new characters within you or not.
+             - so update your state.
+             - make sure the next effector you choose isnt yourself!
+             - send the message to them.
+
+
+             ASSUME:
+
+            messsage.value = {
+              type:<Initiate,React>,
+              incomingCharacters:[],
+              reactionByEffecctor
+            }  
+            */
+            
         }
     })
 }

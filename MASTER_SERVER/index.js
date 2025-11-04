@@ -64,6 +64,7 @@ const keys = Object.keys(topicsMap);
 
 app.get("/initate",async(req,res)=>{
 
+    // randomly assiging characters to places/topics.
     for(let key in topicsMap){
         const topicInfo = topicsMap[key];
         //pick and delete 6 characters randomly from characters array
@@ -74,18 +75,22 @@ app.get("/initate",async(req,res)=>{
         }
     }
 
-    const data = await prisma.state.findFirst();
-    if(data){
-        await prisma.state.deleteMany({});
-    }
+    console.log("==RANDOMLY ASSIGNED CHARACTERS==")
 
-    const moreDate = await prisma.logs.deleteMany({});
+ 
+  //delete existing data from the DB.    
+  await prisma.state.deleteMany({});
+  await prisma.logs.deleteMany({});
+
+  console.log("==DELETED DATA IF EXISTS==")
 
 //     // model State{
 //   id        Int      @id @default(autoincrement())
 //   place String
 //   Character String[]
 // }
+
+    //create data on randomly assinged data and insert it in DB.
     for(let key in topicsMap){
         const topicInfo = topicsMap[key];
         await prisma.state.create({
@@ -96,7 +101,49 @@ app.get("/initate",async(req,res)=>{
         })
     }
 
-    res.json({status:"initiated", topicsMap});
+    console.log("==INSERTED DATA IN DB==");
+
+    const topics = ["library-group","gryffindor-messages","hagrids-group","herbology-group","muggle-group","platform-group","quidditch-group"]
+
+
+   /*
+
+    SEND THIS TO THE EFFECTOR QUEUE:
+       messsage.value = {
+              type:<Initiate,React>,
+              incomingCharacters:[],
+              reactionByEffector
+            }  
+   */    
+  const Data = {
+    type:"Initiate",
+    IncomingCharacters:[],
+    reactionByEffector:""
+  }
+
+  //pick random effector.
+  const effectorIdx = Math.floor(Math.random() * topics.length);
+  const effector = "great-lib-messages";
+
+  try {
+    const D = await producer.send({
+      topic:effector,
+      messages:[{value:JSON.stringify(Data)}]
+    })
+    console.log("==SUCCESSFUL SENT DATA TO SERVER DETAILS: == ",D);
+    res.status(200).json({
+      message:"data sent",
+      preview:D
+    });
+
+  } catch (error) {
+    console.log("an error incurred: ",error);
+    res.status(500).json({error});
+
+  }
+
+
+
 
 })
 
