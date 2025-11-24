@@ -1,55 +1,116 @@
 import express from "express";
 import { Kafka } from "kafkajs";
+import { PrismaClient } from "@prisma/client";
+import AIService from "./AI.js"; // your AI module
 
 const app = express();
-const port = 3002;
-const HOST = '0.0.0.0';
-app.use(express.json())
+const PORT = 3002;
+const HOST = "0.0.0.0";
+app.use(express.json());
 
-// Kafka configuration
 const kafka = new Kafka({
-  clientId: 'GryffindorTowerServer',
-  brokers: ['kafka:29092']
+  clientId: "GryffindorTowerServer",
+  brokers: ["kafka:29092"],
 });
 
-
 const producer = kafka.producer();
+const consumer = kafka.consumer({ groupId: "gryffindor-group" });
+const prisma = new PrismaClient();
 
-async function startProducer(){
-    await producer.connect();
-    console.log("connected server 1 to kafka!!")
+// Helper: pick random effector excluding Gryffindor itself
+const effectors = [
+  "hagrids-messages",
+  "herbology-messages",
+  "muggle-messages",
+  "platform-messages",
+  "quidditch-messages",
+  "great-lib-messages"
+];
+
+async function startProducer() {
+  await producer.connect();
+  console.log("✅ Producer connected to Kafka");
 }
 
+async function startConsumer() {
+  await consumer.connect();
+  await consumer.subscribe({ topic: "gryffindor-messages", fromBeginning: true });
 
-async function startConsumer(){
-    const consumer = kafka.consumer({groupId:"gryffindor-group"});
-    await consumer.connect();
-    await consumer.subscribe({topic:"gryffindor-messages",fromBeginning:true});
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      const value = message.value?.toString();
+      if (!value) return console.log("Empty message received, skipping");
+
+      const data = JSON.parse(value);
+      console.log("Received message:", data);
+
+      try {
+        // Fetch current Gryffindor characters
+        const state = await prisma.state.findFirst({
+          where: { place: "gryffindorTower" },
+        });
+        let charactersInTower = state?.Character || [];
+
+        if (data.type === "Initiate" || data.type === "React") {
+          // Add incoming characters if any
+          if (data.incomingCharacters?.length) {
+            charactersInTower = Array.from(
+              new Set([...charactersInTower, ...data.incomingCharacters])
+            );
+          }
+
+          // Update DB
+          await prisma.state.updateMany({
+            where: { place: "gryffindorTower" },
+            data: { Character: charactersInTower },
+          });
+
+          // Run AIService to decide next characters moving out
+          const { AiResponse, effector } = await AIService(
+            { Character: charactersInTower },
+            effectors[Math.floor(Math.random() * effectors.length)]
+          );
+                    console.log("===AI RESPONSE WHICH HAS CHARS: ",AIService)
+          
+
+          // Remove moved characters from tower
+          const updatedCharacters = charactersInTower.filter(
+            (c) => !AiResponse.chars.includes(c)
+          );
+          
+          await prisma.state.updateMany({
+            where: { place: "gryffindorTower" },
+            data: { Character: updatedCharacters },
+          });
+
+          // Send React message to next effector
+          const MessageBody = {
+            type: "React",
+            incomingCharacters: AiResponse.chars,
+            reactionByEffector: "Gryffindor Tower",
+            ActionEntailed: AiResponse.summ,
+          };
+
+          await producer.send({
+            topic: effector,
+            messages: [{ value: JSON.stringify(MessageBody) }],
+          });
+
+          console.log("Sent React message:", MessageBody);
+        }
+      } catch (err) {
+        console.error("Error processing message:", err);
+      }
+    },
+  });
 }
 
+app.get("/test", async (req, res) => {
+  res.send("hi from Gryffindor Tower");
+});
 
-app.post("/message-to-kafka",async(req,res)=>{
-    const { mess } = req.body;
-
-    try {
-        await producer.send({
-            topic:"magic-messages",
-            messages:[{value:mess}]
-        })
-        console.log("message sent!!")
-        res.json({message:"sent"})
-    } catch (error) {
-        console.log(error);
-        res.json({error})
-    }
-})
-
-app.get("/test",async(req,res)=>{
-    res.send("hi from gryf tower")
-})
-
-app.listen(port, HOST, async () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
+app.listen(PORT, HOST, async () => {
+  console.log(`🚀 Server running at http://${HOST}:${PORT}`);
 
   try {
     await startProducer();
