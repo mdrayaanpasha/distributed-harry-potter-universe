@@ -64,14 +64,13 @@ async function startConsumer() {
             where: { place: "muggleWorld" },
             data: { Character: charactersInPlace },
           });
-
+          const effector = effectors[Math.floor(Math.random() * effectors.length)]
           // AI decides who leaves and what happens
-          const { AiResponse, effector } = await AIService(
+          const AiResponse  = await AIService(
             { Character: charactersInPlace },
-            effectors[Math.floor(Math.random() * effectors.length)]
+            effector
           );
 
-                    console.log("===AI RESPONSE WHICH HAS CHARS: ",AIService)
           
 
           // Remove moved characters

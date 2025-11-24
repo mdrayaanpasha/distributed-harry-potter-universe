@@ -65,10 +65,13 @@ async function startConsumer() {
             data: { Character: charactersInHut },
           });
 
+
           // Run AIService to decide next characters moving out
-          const { AiResponse, effector } = await AIService(
+          const effector = effectors[Math.floor(Math.random() * effectors.length)]
+
+          const AiResponse= await AIService(
             { Character: charactersInHut },
-            effectors[Math.floor(Math.random() * effectors.length)]
+            effector
           );
           console.log("===AI RESPONSE WHICH HAS CHARS: ",AIService)
 

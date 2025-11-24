@@ -65,12 +65,12 @@ async function startConsumer() {
             data: { Character: charactersInPitch },
           });
 
+          const effector = effectors[Math.floor(Math.random() * effectors.length)]
           // Run AIService to decide outgoing characters
-          const { AiResponse, effector } = await AIService(
+          const AiResponse = await AIService(
             { Character: charactersInPitch },
-            effectors[Math.floor(Math.random() * effectors.length)]
+            effector
           );
-                    console.log("===AI RESPONSE WHICH HAS CHARS: ",AIService)
           
 
           // Remove moved characters from pitch

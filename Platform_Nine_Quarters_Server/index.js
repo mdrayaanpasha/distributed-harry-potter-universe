@@ -66,12 +66,12 @@ async function startConsumer() {
           });
 
           // Run AIService to decide outgoing characters
-          const { AiResponse, effector } = await AIService(
+          const effector = effectors[Math.floor(Math.random() * effectors.length)]
+          const  AiResponse = await AIService(
             { Character: charactersInPlace },
-            effectors[Math.floor(Math.random() * effectors.length)]
+            effector
           );
 
-          console.log("AI RESPONSE THAT HAS CHARS!! AND ALSO EFFECTORS===\n",AiResponse,effector)
 
           // Remove moved characters from place
           const updatedCharacters = charactersInPlace.filter(

@@ -65,14 +65,14 @@ async function startConsumer() {
             data: { Character: charactersInPlace },
           });
 
+          let effector = effectors[Math.floor(Math.random() * effectors.length)]
           // AI decides who leaves and what happens
           const AiResponse = await AIService(
             { Character: charactersInPlace },
-            effectors[Math.floor(Math.random() * effectors.length)]
+            effector
           );
 
 
-          let effector = effectors[Math.floor(Math.random() * effectors.length)]
 
 
           console.log("AI RESPONSE: == ",AiResponse,"\n EFFECTOR: ",effector);

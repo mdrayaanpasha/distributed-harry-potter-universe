@@ -66,18 +66,18 @@ async function startConsumer() {
           });
 
           // Run AIService to decide next characters moving out
-          const { AiResponse, effector } = await AIService(
+          const effector = effectors[Math.floor(Math.random() * effectors.length)];          
+
+          const AiResponse = await AIService(
             { Character: charactersInTower },
-            effectors[Math.floor(Math.random() * effectors.length)]
+            effector
           );
-                    console.log("===AI RESPONSE WHICH HAS CHARS: ",AIService)
-          
 
           // Remove moved characters from tower
           const updatedCharacters = charactersInTower.filter(
             (c) => !AiResponse.chars.includes(c)
           );
-          
+
           await prisma.state.updateMany({
             where: { place: "gryffindorTower" },
             data: { Character: updatedCharacters },

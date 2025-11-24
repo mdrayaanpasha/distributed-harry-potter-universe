@@ -15,6 +15,16 @@ const kafka = new Kafka({
   brokers: ["kafka:29092"],
 });
 
+const effectors = [
+  "gryffindor-messages",
+  "hagrids-messages",
+  "muggle-messages",
+  "platform-messages",
+  "herbology-messages",
+  "quidditch-messages"
+];
+
+
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: "library-group" });
 
@@ -40,8 +50,8 @@ async function InitiateProcess() {
     "quidditch-messages",
   ];
 
-  // const effector = topics[Math.floor(Math.random() * topics.length)];
-  const effector = "herbology-messages";
+  const effector = topics[Math.floor(Math.random() * topics.length)];
+  // const effector = "herbology-messages";
   console.log("MY EFFECTOR:", effector);
 
   const AiResponse = await AIService({ Character: myCharacters }, effector);
@@ -75,13 +85,16 @@ async function startConsumer() {
 
       try {
         if (data.type === "Initiate") {
-          const { AiResponse, effector } = await InitiateProcess();
+          const AiResponse = await InitiateProcess();
           const MessageBody = {
             type: "React",
             incomingCharacters: AiResponse.chars,
             reactionByEffector: "Great Library",
             ActionEntailed: AiResponse.summ,
           };
+
+           let effector = effectors[Math.floor(Math.random() * effectors.length)]
+
 
           await producer.send({
             topic: effector,
@@ -103,8 +116,9 @@ async function startConsumer() {
             data: { Character: { set: mergedCharacters } },
           });
 
-          const { AiResponse, effector } = await InitiateProcess();
-          console.log("===AI RESPONSE WHICH HAS CHARS: ",AIService)
+            const {AiResponse,effector} = await InitiateProcess();
+
+
           const MessageBody = {
             type: "React",
             incomingCharacters: AiResponse.chars,
