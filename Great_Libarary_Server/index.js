@@ -75,13 +75,10 @@ async function startConsumer() {
   console.log("✅ Server actively listening");
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      console.log("=====================");
       const messageValue = message.value?.toString();
       if (!messageValue) return console.log("Received null/empty message, skipping.");
 
-      console.log("Received:", messageValue);
       const data = JSON.parse(messageValue);
-      console.log("JSON VERSION OF DATA:", data);
 
       try {
         if (data.type === "Initiate") {
@@ -100,7 +97,9 @@ async function startConsumer() {
             topic: effector,
             messages: [{ value: JSON.stringify(MessageBody) }],
           });
+
           console.log("===MESSAGE SENT===", MessageBody);
+          console.log("\n\n\n\n\n\n\n\n\n\n\n")
         } else if (data.type === "React") {
           const incomingCharacters = data.incomingCharacters || [];
           const myCharactersRecord = await prisma.state.findFirst({

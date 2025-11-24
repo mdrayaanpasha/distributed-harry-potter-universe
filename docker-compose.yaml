@@ -110,6 +110,16 @@ services:
       - postgres
     restart: always
 
+  client_app:
+    build: ./client/app
+    container_name: client-app
+    ports:
+      - "4000:80"
+    depends_on:
+      - master_server
+    restart: always
+
+
       
     
 
