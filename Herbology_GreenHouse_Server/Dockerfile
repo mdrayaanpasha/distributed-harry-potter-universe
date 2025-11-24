@@ -13,4 +13,6 @@ COPY .env.docker .env
 
 EXPOSE 3004
 
+RUN npx prisma generate
+
 CMD [ "node","index.js" ]

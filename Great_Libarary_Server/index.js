@@ -40,7 +40,7 @@ async function InitiateProcess() {
   });
 
   const myCharacters = myCharactersRecord?.Character || [];
-  console.log("CHARACTERS IN MY DB:", myCharacters);
+
 
   const topics = [
     "hagrids-messages",
@@ -52,7 +52,7 @@ async function InitiateProcess() {
 
   const effector = topics[Math.floor(Math.random() * topics.length)];
   // const effector = "herbology-messages";
-  console.log("MY EFFECTOR:", effector);
+
 
   const AiResponse = await AIService({ Character: myCharacters }, effector);
 
@@ -98,10 +98,16 @@ async function startConsumer() {
             messages: [{ value: JSON.stringify(MessageBody) }],
           });
 
-          console.log("===MESSAGE SENT===", MessageBody);
-          console.log("\n\n\n\n\n\n\n\n\n\n\n")
+
+
         } else if (data.type === "React") {
           const incomingCharacters = data.incomingCharacters || [];
+
+           console.log("🕊️ From:", data.reactionByEffector);
+          console.log("👥 Character Came:", data.incomingCharacters || "None");
+          console.log("📖 Scene:", data.ActionEntailed);
+          console.log("═".repeat(60) + "\n");
+
           const myCharactersRecord = await prisma.state.findFirst({
             where: { place: "greatLibrary" },
             select: { Character: true },
@@ -125,11 +131,17 @@ async function startConsumer() {
             ActionEntailed: AiResponse.summ,
           };
 
+          console.log("🕊️ Sent To:", effector);
+          console.log("📦 Constructed Message Body");
+          console.log("👥 Transffered Characters:", MessageBody.incomingCharacters.join(", ") || "None");
+          console.log("📖 Scene:", MessageBody.ActionEntailed);
+          console.log("═".repeat(60) + "\n");
+
           await producer.send({
             topic: effector,
             messages: [{ value: JSON.stringify(MessageBody) }],
           });
-          console.log("===MESSAGE SENT===", MessageBody);
+        
         }
       } catch (err) {
         console.error("❌ Error processing message:", err);
