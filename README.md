@@ -8,7 +8,7 @@
 
 Most microservices use simple HTTP requests. I wanted to build a **truly asynchronous, event-driven system** where the "Master Server" doesn't just call other services—it initiates an event that lives and evolves within a **Kafka infrastructure**.
 
-## 🏗️ Architecture: The Wizarding World on Rails
+## 🏗️ The Architecture
 
 Each location in the Wizarding World is a standalone Node.js microservice. Characters are serialized into JSON and "transported" through Kafka topics, simulating real-time state synchronization across a distributed environment.
 
@@ -59,7 +59,7 @@ graph TD
 
 ---
 
-## 🐳 Quick Start (One Command Universe)
+## 🐳 Quick Start
 
 ### 1. Launch the Universe
 
@@ -77,7 +77,7 @@ curl http://localhost:3008/initate
 
 ```
 
-### 📜 Live Logs (The "Owl Post")
+### 📜 Live Logs (Preview of working)
 
 Watch your terminal for real-time Kafka event streams:
 
